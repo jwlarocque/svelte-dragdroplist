@@ -1,4 +1,5 @@
 <script>
+    import {onMount} from 'svelte';
     export let data = [];
 
     let list;
@@ -11,13 +12,28 @@
     let from;
     let to;
 
+    onMount(async () => {setup();})
+
+    function setup() {
+        // TODO: this won't work with multiple lists on the page
+        list = document.querySelector(".list");
+        let listy = list.getBoundingClientRect().y;
+        let children = Array.from(list.children);
+        children.forEach((child) => {
+            if (child.id !== "ghost") {
+                let ref = document.getElementById("ref" + child.id.substring(4));
+                child.style.top = ref.getBoundingClientRect().y - listy + "px";
+            }
+        });
+    }
+
     function grab(ev, element) {
+        console.log(element);
+
         if (grabbed) {
             grabbed.classList.remove("grabbed");
         }
 
-        // TODO: this won't work with multiple lists on the page
-        list = document.querySelector(".list");
         let i = Array.prototype.indexOf.call(list.children, element);
         from = i;
         to = i;
@@ -48,25 +64,34 @@
     function reorder(mouseY) {
         if (prev) {
             let bounds = prev.getBoundingClientRect();
-            if (prev && mouseY < bounds.y + bounds.height / 2) {
+            if (mouseY < bounds.y + bounds.height / 2) {
+                let grabbedtop = grabbed.style.top;
+                grabbed.style.top = prev.style.top;
+                prev.style.top = grabbedtop;
                 let temp = prev;
                 prev = prev.previousElementSibling;
+                // skip the grabbed element
+                if (prev && prev.classList.contains("grabbed")) {
+                    prev = prev.previousElementSibling;
+                }
+                console.log(prev);
                 next = temp;
-                next.before(grabbed);
                 to--;
 
                 return reorder(mouseY);
             }
         }
         if (next) {
-            let bounds = next.getBoundingClientRect()
+            let bounds = next.getBoundingClientRect();
             // extra check for next sibling because 
             // the ghost element isn't really part of the list
-            if (next && next.nextElementSibling && mouseY > bounds.y + bounds.height / 2) {
+            if (next.nextElementSibling && mouseY > bounds.y + bounds.height / 2) {
+                let grabbedtop = grabbed.style.top;
+                grabbed.style.top = next.style.top;
+                next.style.top = grabbedtop;
                 let temp = next;
                 next = next.nextElementSibling;
                 prev = temp;
-                prev.after(grabbed);
                 to++;
 
                 return reorder(mouseY);
@@ -100,19 +125,25 @@
 
     function updateGhostPos(mouseX, mouseY) {
         ghost.style.top = mouseY - offsetY + "px";
-        ghost.style.left = mouseX - offsetX + "px";
+        //ghost.style.left = mouseX - offsetX + "px";
     }
 </script>
 
 <style>
-    .list {
+    .list, .reference {
         position: relative;
         display: flex;
         flex-direction: column;
         gap: 5px;
     }
 
+    .list .item {
+        position: absolute;
+    }
+
     .item {
+        top: 0;
+        left: 0;
         display: inline-flex;
         border: 1px solid rgba(0, 0, 0, 0.5);
         border-radius: 2px;
@@ -138,20 +169,35 @@
     .hidden {
         visibility: hidden;
     }
+
+    .reference {
+        opacity: 0.0;
+        z-index: -100;
+    }
 </style>
 
-<div 
-    class="list"
-    on:mousemove={function(ev) { drag(ev); }}
-    on:mouseup={function(ev) { drop(ev); }}>
-    {#each data as datum (datum)}
-        <div 
-            class="item"
-            on:mousedown={function(ev) { grab(ev, this); }}>
-            <p>{datum}</p>
-        </div>
-    {/each}
+<main>
     <div 
-        class="item hidden" 
-        id="ghost"></div>
-</div>
+        class="list"
+        on:mousemove={function(ev) { drag(ev); }}
+        on:mouseup={function(ev) { drop(ev); }}>
+        {#each data as datum, i (datum)}
+            <div 
+                class="item"
+                id={"item" + i}
+                on:mousedown={function(ev) { grab(ev, this); }}>
+                <p>{datum}</p>
+            </div>
+        {/each}
+        <div 
+            class="item hidden" 
+            id="ghost"></div>
+    </div>
+    <div class="reference">
+        {#each data as datum, i}
+            <div class="item" id={"ref" + i}>
+                <p>{datum}</p>
+            </div>
+        {/each}
+    </div>
+</main>
