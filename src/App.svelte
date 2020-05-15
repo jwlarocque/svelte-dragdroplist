@@ -8,7 +8,7 @@
 	<h1>DragDrop</h1>
 	<p>Data: {data}</p>
 	<div>
-		<DragDrop {data}/>
+		<DragDrop bind:data={data}/>
 	</div>
 </main>
 

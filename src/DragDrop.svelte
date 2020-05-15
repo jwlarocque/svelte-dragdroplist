@@ -8,29 +8,26 @@
     let ghost;
     let offsetX;
     let offsetY;
+    let from;
+    let to;
 
-    function updateGhostPos(mouseX, mouseY) {
-        ghost.style.top = mouseY - offsetY + "px";
-        ghost.style.left = mouseX - offsetX + "px";
-    }
-
-    function grab(ev, i) {
-        console.log("grab event:");
-        console.log(ev);
+    function grab(ev, element) {
         if (grabbed) {
             grabbed.classList.remove("grabbed");
         }
 
         // TODO: this won't work with multiple lists on the page
         list = document.querySelector(".list");
+        let i = Array.prototype.indexOf.call(list.children, element);
+        from = i;
+        to = i;
         grabbed = list.children[i];
-        prev = i > 1 ? list.children[i-1] : null;
+        prev = i > 0 ? list.children[i-1] : null;
         next = i < list.children.length - 1 ? list.children[i+1] : null;
 
         grabbed.classList.add("grabbed");
         let grabbedBounds = grabbed.getBoundingClientRect();
         let parentBounds = grabbed.parentNode.getBoundingClientRect();
-        console.log(parentBounds);
         offsetX = parentBounds.x + (ev.clientX - grabbedBounds.x);
         offsetY = parentBounds.y + (ev.clientY - grabbedBounds.y);
 
@@ -44,11 +41,36 @@
     function drag(ev) {
         if (grabbed) {
             updateGhostPos(ev.clientX, ev.clientY);
-            for (let i = 0; i < list.children.length; i++) {
-                let item = list.children[i];
-                let bounds = item.getBoundingClientRect();
+            reorder(ev.clientY);
+        }
+    }
+
+    function reorder(mouseY) {
+        if (prev) {
+            let bounds = prev.getBoundingClientRect();
+            if (prev && mouseY < bounds.y + bounds.height / 2) {
+                let temp = prev;
+                prev = prev.previousElementSibling;
+                next = temp;
+                next.before(grabbed);
+                to--;
+
+                return reorder(mouseY);
             }
-            
+        }
+        if (next) {
+            let bounds = next.getBoundingClientRect()
+            // extra check for next sibling because 
+            // the ghost element isn't really part of the list
+            if (next && next.nextElementSibling && mouseY > bounds.y + bounds.height / 2) {
+                let temp = next;
+                next = next.nextElementSibling;
+                prev = temp;
+                prev.after(grabbed);
+                to++;
+
+                return reorder(mouseY);
+            }
         }
     }
 
@@ -56,8 +78,29 @@
         if (grabbed) {
             grabbed.classList.remove("grabbed");
             grabbed = null;
+            next = null;
             ghost.classList.add("hidden");
+            let temp;
+            console.log("from: " + from + " to: " + to);
+            if (from > to) {
+                for (let i = from; i > to; i--) {
+                    temp = data[i];
+                    data[i] = data[i - 1];
+                    data[i - 1] = temp;
+                }
+            } else {
+                for(let i = from; i < to; i++) {
+                    temp = data[i];
+                    data[i] = data[i + 1];
+                    data[i + 1] = temp;
+                }
+            }
         }
+    }
+
+    function updateGhostPos(mouseX, mouseY) {
+        ghost.style.top = mouseY - offsetY + "px";
+        ghost.style.left = mouseX - offsetX + "px";
     }
 </script>
 
@@ -101,10 +144,10 @@
     class="list"
     on:mousemove={function(ev) { drag(ev); }}
     on:mouseup={function(ev) { drop(ev); }}>
-    {#each data as datum, i}
+    {#each data as datum (datum)}
         <div 
             class="item"
-            on:mousedown={function(ev) { grab(ev, i); }}>
+            on:mousedown={function(ev) { grab(ev, this); }}>
             <p>{datum}</p>
         </div>
     {/each}
