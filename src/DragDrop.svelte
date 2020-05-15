@@ -1,3 +1,5 @@
+<!-- Welcome to Bodgetown -->
+
 <script>
     import {onMount} from 'svelte';
     export let data = [];
@@ -11,6 +13,7 @@
     let offsetY;
     let from;
     let to;
+    let dodrag = true;
 
     onMount(async () => {setup();})
 
@@ -27,8 +30,7 @@
         });
     }
 
-    function grab(ev, element) {
-        console.log(element);
+    function grab(mouseX, mouseY, element) {
 
         if (grabbed) {
             grabbed.classList.remove("grabbed");
@@ -44,20 +46,21 @@
         grabbed.classList.add("grabbed");
         let grabbedBounds = grabbed.getBoundingClientRect();
         let parentBounds = grabbed.parentNode.getBoundingClientRect();
-        offsetX = parentBounds.x + (ev.clientX - grabbedBounds.x);
-        offsetY = parentBounds.y + (ev.clientY - grabbedBounds.y);
+        offsetX = parentBounds.x + (mouseX - grabbedBounds.x);
+        offsetY = parentBounds.y + (mouseY - grabbedBounds.y);
 
         ghost = document.getElementById("ghost");
         ghost.innerHTML = grabbed.innerHTML;
         ghost.classList.remove("hidden");
+        ghost.style.transform = "scale(1.1)";
 
-        updateGhostPos(ev.clientX, ev.clientY);
+        updateGhostPos(mouseX, mouseY);
     }
 
-    function drag(ev) {
-        if (grabbed) {
-            updateGhostPos(ev.clientX, ev.clientY);
-            reorder(ev.clientY);
+    function drag(mouseX, mouseY) {
+        if (grabbed && dodrag) {
+            updateGhostPos(mouseX, mouseY);
+            reorder(mouseY);
         }
     }
 
@@ -74,7 +77,6 @@
                 if (prev && prev.classList.contains("grabbed")) {
                     prev = prev.previousElementSibling;
                 }
-                console.log(prev);
                 next = temp;
                 to--;
 
@@ -101,23 +103,39 @@
 
     function drop(ev) {
         if (grabbed) {
-            grabbed.classList.remove("grabbed");
-            grabbed = null;
+            console.log("dropping!");
+            ghost.style.transition = "all 0.2s ease-in-out";
+            ghost.style.top = grabbed.style.top;
+            ghost.style.transform = "scale(1.0)";
             next = null;
-            ghost.classList.add("hidden");
-            let temp;
-            console.log("from: " + from + " to: " + to);
-            if (from > to) {
-                for (let i = from; i > to; i--) {
-                    temp = data[i];
-                    data[i] = data[i - 1];
-                    data[i - 1] = temp;
-                }
-            } else {
-                for(let i = from; i < to; i++) {
-                    temp = data[i];
-                    data[i] = data[i + 1];
-                    data[i + 1] = temp;
+            prev = null;
+            let ended = 0;
+            dodrag = false;
+            ghost.ontransitionend = () => {
+                ended++;
+                if (ended >= 2) {
+                    ghost.ontransitionend = null; // keep this from triggering all the time
+                    ghost.style.transition = "";
+                    ghost.style.top = "";
+                    ghost.style.transform = "";
+                    ghost.classList.add("hidden");
+                    grabbed.classList.remove("grabbed");
+                    grabbed = null;
+                    dodrag = true;
+                    let temp;
+                    if (from > to) {
+                        for (let i = from; i > to; i--) {
+                            temp = data[i];
+                            data[i] = data[i - 1];
+                            data[i - 1] = temp;
+                        }
+                    } else {
+                        for(let i = from; i < to; i++) {
+                            temp = data[i];
+                            data[i] = data[i + 1];
+                            data[i + 1] = temp;
+                        }
+                    }
                 }
             }
         }
@@ -134,7 +152,6 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        gap: 5px;
     }
 
     .list .item {
@@ -142,14 +159,20 @@
     }
 
     .item {
+        background-color: white;
         top: 0;
         left: 0;
         display: inline-flex;
         border: 1px solid rgba(0, 0, 0, 0.5);
         border-radius: 2px;
         width: 100%;
-        height: 2em;
+        min-height: 2em;
         user-select: none;
+        margin-bottom: 0.5em;
+    }
+
+    .item:not(#ghost) {
+        transition: top 0.2s ease-in-out;
     }
 
     .item > * {
@@ -161,9 +184,9 @@
     }
 
     #ghost {
-        opacity: 0.6;
+        scale: 1.0;
         position: absolute;
-        top: -50px;
+        transition: transform 0.2s ease-in-out;
     }
 
     .hidden {
@@ -179,13 +202,16 @@
 <main>
     <div 
         class="list"
-        on:mousemove={function(ev) { drag(ev); }}
-        on:mouseup={function(ev) { drop(ev); }}>
+        on:mousemove={function(ev) { drag(ev.clientX, ev.clientY); }}
+        on:touchmove={function(ev) { drag(ev.touches[0].clientX, ev.touches[0].clientY); }}
+        on:mouseup={function(ev) { drop(ev); }}
+        on:touchend={function(ev) { drop(ev); }}>
         {#each data as datum, i (datum)}
             <div 
                 class="item"
                 id={"item" + i}
-                on:mousedown={function(ev) { grab(ev, this); }}>
+                on:mousedown={function(ev) { grab(ev.clientX, ev.clientY, this); }}
+                on:touchstart={function(ev) { grab(ev.touches[0].clientX, ev.touches[0].clientY, this); }}>
                 <p>{datum}</p>
             </div>
         {/each}

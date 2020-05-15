@@ -2,6 +2,7 @@
 	import DragDrop from "./DragDrop.svelte";
 
 	let data = new Array(6).fill(0).map((x, i) => ("Item " + (i + 1)));
+	data[6] = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
 </script>
 
 <main>
@@ -23,7 +24,7 @@
 	h1 {
 		color: #ff3e00;
 		text-transform: uppercase;
-		font-size: 4em;
+		font-size: 3em;
 		font-weight: 100;
 	}
 
