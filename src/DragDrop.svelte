@@ -1,227 +1,103 @@
-<!-- Welcome to Bodgetown -->
-
 <script>
     import {onMount} from 'svelte';
     export let data = [];
 
-    let list;
-    let grabbed;
-    let prev;
-    let next;
     let ghost;
-    let offsetX;
-    let offsetY;
-    let from;
-    let to;
-    let dodrag = true;
+    let grabbed;
 
-    onMount(async () => {setup();})
+    let mouseY;
+    let offsetY = 0;
 
-    function setup() {
-        // TODO: this won't work with multiple lists on the page
-        list = document.querySelector(".list");
-        let listy = list.getBoundingClientRect().y;
-        let children = Array.from(list.children);
-        children.forEach((child) => {
-            if (child.id !== "ghost") {
-                let ref = document.getElementById("ref" + child.id.substring(4));
-                child.style.top = ref.getBoundingClientRect().y - listy + "px";
-            }
-        });
-    }
-
-    function grab(mouseX, mouseY, element) {
-
-        if (grabbed) {
-            grabbed.classList.remove("grabbed");
-        }
-
-        let i = Array.prototype.indexOf.call(list.children, element);
-        from = i;
-        to = i;
-        grabbed = list.children[i];
-        prev = i > 0 ? list.children[i-1] : null;
-        next = i < list.children.length - 1 ? list.children[i+1] : null;
-
-        grabbed.classList.add("grabbed");
-        let grabbedBounds = grabbed.getBoundingClientRect();
-        let parentBounds = grabbed.parentNode.getBoundingClientRect();
-        offsetX = parentBounds.x + (mouseX - grabbedBounds.x);
-        offsetY = parentBounds.y + (mouseY - grabbedBounds.y);
-
+    onMount(() => {
         ghost = document.getElementById("ghost");
+    });
+
+    function setGrabbed(ev, element) {
+        // modify grabbed element
+        grabbed = element;
+        grabbed.id = "grabbed";
+        grabbed.dataset.grabX = ev.clientX;
+        grabbed.dataset.grabY = ev.clientY;
+
+        // modify ghost element (which is actually dragged)
         ghost.innerHTML = grabbed.innerHTML;
-        ghost.classList.remove("hidden");
-        ghost.style.transform = "scale(1.1)";
 
-        updateGhostPos(mouseX, mouseY);
+        // record offset from cursor to top of element
+        // (used for positioning ghost)
+        offsetY = grabbed.getBoundingClientRect().y - ev.clientY;
     }
 
-    function drag(mouseX, mouseY) {
-        if (grabbed && dodrag) {
-            updateGhostPos(mouseX, mouseY);
-            reorder(mouseY);
-        }
-    }
-
-    function reorder(mouseY) {
-        if (prev) {
-            let bounds = prev.getBoundingClientRect();
-            if (mouseY < bounds.y + bounds.height / 2) {
-                let grabbedtop = grabbed.style.top;
-                grabbed.style.top = prev.style.top;
-                prev.style.top = grabbedtop;
-                let temp = prev;
-                prev = prev.previousElementSibling;
-                // skip the grabbed element
-                if (prev && prev.classList.contains("grabbed")) {
-                    prev = prev.previousElementSibling;
-                }
-                next = temp;
-                to--;
-
-                return reorder(mouseY);
-            }
-        }
-        if (next) {
-            let bounds = next.getBoundingClientRect();
-            // extra check for next sibling because 
-            // the ghost element isn't really part of the list
-            if (next.nextElementSibling && mouseY > bounds.y + bounds.height / 2) {
-                let grabbedtop = grabbed.style.top;
-                grabbed.style.top = next.style.top;
-                next.style.top = grabbedtop;
-                let temp = next;
-                next = next.nextElementSibling;
-                prev = temp;
-                to++;
-
-                return reorder(mouseY);
-            }
-        }
-    }
-
-    function drop(ev) {
-        if (grabbed) {
-            console.log("dropping!");
-            ghost.style.transition = "all 0.2s ease-in-out";
-            ghost.style.top = grabbed.style.top;
-            ghost.style.transform = "scale(1.0)";
-            next = null;
-            prev = null;
-            let ended = 0;
-            dodrag = false;
-            ghost.ontransitionend = () => {
-                ended++;
-                if (ended >= 2) {
-                    ghost.ontransitionend = null; // keep this from triggering all the time
-                    ghost.style.transition = "";
-                    ghost.style.top = "";
-                    ghost.style.transform = "";
-                    ghost.classList.add("hidden");
-                    grabbed.classList.remove("grabbed");
-                    grabbed = null;
-                    dodrag = true;
-                    let temp;
-                    if (from > to) {
-                        for (let i = from; i > to; i--) {
-                            temp = data[i];
-                            data[i] = data[i - 1];
-                            data[i - 1] = temp;
-                        }
-                    } else {
-                        for(let i = from; i < to; i++) {
-                            temp = data[i];
-                            data[i] = data[i + 1];
-                            data[i + 1] = temp;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    function updateGhostPos(mouseX, mouseY) {
-        ghost.style.top = mouseY - offsetY + "px";
-        //ghost.style.left = mouseX - offsetX + "px";
+    function release(ev) {
+        // undo modifications to grabbed element
+        grabbed.id = "";
+        // also re-hides ghost
+        grabbed = null;
     }
 </script>
 
 <style>
-    .list, .reference {
+    main {
         position: relative;
+    }
+
+    .list {
+        z-index: 5;
         display: flex;
         flex-direction: column;
     }
 
-    .list .item {
-        position: absolute;
-    }
-
     .item {
-        background-color: white;
-        top: 0;
-        left: 0;
         display: inline-flex;
+        width: 100%;
+        min-height: 3em;
+        margin-bottom: 0.5em;
+        background-color: white;
         border: 1px solid rgba(0, 0, 0, 0.5);
         border-radius: 2px;
-        width: 100%;
-        min-height: 2em;
         user-select: none;
-        margin-bottom: 0.5em;
-    }
-
-    .item:not(#ghost) {
-        transition: top 0.2s ease-in-out;
     }
 
     .item > * {
         margin: auto;
     }
 
-    :global(.grabbed) {
+    :global(#grabbed) {
         opacity: 0.0;
     }
 
-    #ghost {
-        scale: 1.0;
+    :global(#ghost) {
+        pointer-events: none;
+        z-index: -5;
         position: absolute;
-        transition: transform 0.2s ease-in-out;
-    }
-
-    .hidden {
-        visibility: hidden;
-    }
-
-    .reference {
+        top: 0;
+        left: 0;
         opacity: 0.0;
-        z-index: -100;
+    }
+
+    /* Svelte seems to be a bit overzealous about minifying away this rule, so it's
+       set to global.  Consider submitting an issue/otherwise bringing it up. 
+       The above rule must also be global so precedence works normally. */
+    :global(.haunting#ghost) {
+        z-index: 10;
+        opacity: 1.0;
     }
 </style>
 
 <main>
     <div 
+        id="ghost"
+        class={grabbed ? "item haunting" : "item"}
+        style={"top: " + (mouseY + offsetY) + "px"}></div>
+    <div 
         class="list"
-        on:mousemove={function(ev) { drag(ev.clientX, ev.clientY); }}
-        on:touchmove={function(ev) { drag(ev.touches[0].clientX, ev.touches[0].clientY); }}
-        on:mouseup={function(ev) { drop(ev); }}
-        on:touchend={function(ev) { drop(ev); }}>
-        {#each data as datum, i (datum)}
+        on:mousemove={function(ev) {mouseY = ev.layerY;}}
+        on:mouseup={function(ev) {release(ev)}}>
+        {#each data as datum}
             <div 
                 class="item"
-                id={"item" + i}
-                on:mousedown={function(ev) { grab(ev.clientX, ev.clientY, this); }}
-                on:touchstart={function(ev) { grab(ev.touches[0].clientX, ev.touches[0].clientY, this); }}>
-                <p>{datum}</p>
-            </div>
-        {/each}
-        <div 
-            class="item hidden" 
-            id="ghost"></div>
-    </div>
-    <div class="reference">
-        {#each data as datum, i}
-            <div class="item" id={"ref" + i}>
+                data-grabX="0"
+                data-grabY="0"
+                on:mousedown={function(ev) {setGrabbed(ev, this)}}>
                 <p>{datum}</p>
             </div>
         {/each}

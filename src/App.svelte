@@ -14,11 +14,18 @@
 </main>
 
 <style>
+	:global(body) {
+		padding: 0;
+		width: 100%;
+	}
+
 	main {
 		text-align: center;
-		padding: 1em;
 		max-width: 240px;
-		margin: 0 auto;
+		margin: 0;
+		padding: 2em 1em;
+		min-height: 100%;
+		background-color: #eef2f3;
 	}
 
 	h1 {
@@ -26,6 +33,7 @@
 		text-transform: uppercase;
 		font-size: 3em;
 		font-weight: 100;
+		margin-top: 0;
 	}
 
 	div {
