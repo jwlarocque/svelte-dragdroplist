@@ -6,18 +6,22 @@
     let ghost;
     let grabbed;
 
-    let mouseY;
+    let mouseY = 0;
     let offsetY = 0;
+    let layerY = 0;
 
     onMount(() => {
         ghost = document.getElementById("ghost");
+        // TODO: DOM changes on the rest of the page could break this
+        layerY = ghost.getBoundingClientRect().y;
     });
+
+    // from Underscore.js
 
     function grab(ev, element) {
         // modify grabbed element
         grabbed = element;
         grabbed.id = "grabbed";
-        grabbed.dataset.grabX = ev.clientX;
         grabbed.dataset.grabY = ev.clientY;
 
         // modify ghost element (which is actually dragged)
@@ -25,14 +29,19 @@
 
         // record offset from cursor to top of element
         // (used for positioning ghost)
-        mouseY = ev.layerY;
+        mouseY = ev.clientY;
         offsetY = grabbed.getBoundingClientRect().y - ev.clientY;
     }
 
     function drag(ev) {
         if (grabbed) {
-            mouseY = ev.layerY;
-            
+            mouseY = ev.clientY;
+        }
+    }
+
+    function dragEnter(ev) {
+        drag(ev);
+        if (grabbed) {
             // swap items in data
             // TODO: FIXME: undesired/multiple triggers when moving a short element over a tall one
             // (because the swap doesn't move the tall element out from under the short ghost)
@@ -45,8 +54,6 @@
     function moveDatum(from, to) {
         let temp = data.splice(from, 1)[0];
         data = [...data.slice(0, to), temp, ...data.slice(to)];
-        
-        //data.splice(to, 0, data.splice(from, 1)[0]);
     }
 
     function release(ev) {
@@ -109,7 +116,7 @@
     <div 
         id="ghost"
         class={grabbed ? "item haunting" : "item"}
-        style={"top: " + (mouseY + offsetY) + "px"}></div>
+        style={"top: " + (mouseY + offsetY - layerY) + "px"}></div>
     <div 
         class="list"
         on:mousemove={function(ev) {drag(ev)}}
@@ -118,10 +125,12 @@
             <div 
                 class="item"
                 data-index={i}
-                data-grabX="0"
                 data-grabY="0"
                 on:mousedown={function(ev) {grab(ev, this)}}
-                on:mousemove|stopPropagation={function(ev) {drag(ev)}}>
+                on:mouseenter|stopPropagation|self={function(ev) {dragEnter(ev)}}
+                in:receive={{key: datum}}
+                out:send={{key: datum}}
+                animate:flip={{duration: 200}}>
                 <p>{datum}</p>
             </div>
         {/each}
