@@ -2,7 +2,7 @@
 	import DragDrop from "./DragDrop.svelte";
 
 	let data = new Array(6).fill(0).map((x, i) => ("Item " + (i + 1)));
-	data[6] = ("<p style='background-color: red;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>");
+	data[6] = ({"id": "lorem","html": "<p style='color: red;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>"});
 </script>
 
 <main>

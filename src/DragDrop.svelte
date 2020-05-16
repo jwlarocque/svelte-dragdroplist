@@ -1,5 +1,4 @@
 <script>
-    import {onMount} from "svelte";
     import {flip} from "svelte/animate";
     export let data = [];
 
@@ -8,17 +7,9 @@
 
     let lastTarget;
 
-    let mouseY = 0;
-    let offsetY = 0;
-    let layerY = 0;
-
-    onMount(() => {
-        ghost = document.getElementById("ghost");
-        // TODO: DOM changes on the rest of the page could break this
-        layerY = ghost.getBoundingClientRect().y;
-    });
-
-    // from Underscore.js
+    let mouseY = 0; // pointer y coordinate within client
+    let offsetY = 0; // y distance from top of grabbed element to pointer
+    let layerY = 0; // distance from top of list to top of client
 
     function grab(clientY, element) {
         // modify grabbed element
@@ -31,21 +22,22 @@
 
         // record offset from cursor to top of element
         // (used for positioning ghost)
-        mouseY = clientY;
         offsetY = grabbed.getBoundingClientRect().y - clientY;
+        drag(clientY);
     }
 
     function drag(clientY) {
         if (grabbed) {
             mouseY = clientY;
+            layerY = ghost.parentNode.getBoundingClientRect().y;
         }
     }
 
     function touchEnter(ev) {       
         drag(ev.clientY);
+        // trigger dragEnter the first time the cursor moves over a list item
         let target = document.elementFromPoint(ev.clientX, ev.clientY).closest(".item");
         if (target && target != lastTarget) {
-            console.log(target);
             lastTarget = target;
             dragEnter(ev, target);
         }
@@ -86,12 +78,14 @@
     }
 
     .item {
+        box-sizing: border-box;
+        padding-right: 2em;
         display: inline-flex;
         width: 100%;
         min-height: 3em;
         margin-bottom: 0.5em;
         background-color: white;
-        border: 1px solid rgba(0, 0, 0, 0.5);
+        border: 1px solid rgb(190, 190, 190);
         border-radius: 2px;
         user-select: none;
     }
@@ -102,6 +96,23 @@
 
     .item > * {
         margin: auto;
+    }
+
+    .buttons {
+        width: 2em;
+        min-width: 2em;
+        margin: auto 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .buttons button {
+        width: 1em;
+        height: 1em;
+        margin: 0 auto;
+        padding: 0;
+        border: none;
+        background-color: inherit;
     }
 
     :global(#grabbed) {
@@ -132,6 +143,7 @@
 
 <main>
     <div 
+        bind:this={ghost}
         id="ghost"
         class={grabbed ? "item haunting" : "item"}
         style={"top: " + (mouseY + offsetY - layerY) + "px"}></div>
@@ -141,19 +153,39 @@
         on:touchmove={function(ev) {drag(ev.touches[0].clientY);}}
         on:mouseup|stopPropagation={function(ev) {release(ev);}}
         on:touchend|stopPropagation={function(ev) {release(ev.touches[0]);}}>
-        {#each data as datum, i (datum)}
+        {#each data as datum, i (datum.id ? datum.id : datum)}
             <div 
                 class="item"
                 data-index={i}
                 data-grabY="0"
                 on:mousedown={function(ev) {grab(ev.clientY, this);}}
-                on:touchstart|preventDefault={function(ev) {grab(ev.touches[0].clientY, this);}}
+                on:touchstart={function(ev) {grab(ev.touches[0].clientY, this);}}
                 on:mouseenter|stopPropagation|self={function(ev) {dragEnter(ev, ev.target);}}
                 on:touchmove|preventDefault|stopPropagation={function(ev) {touchEnter(ev.touches[0]);}}
                 in:receive={{key: datum}}
                 out:send={{key: datum}}
                 animate:flip={{duration: 200}}>
-                <p>{datum}</p>
+                
+                <div class="buttons">
+                    <button 
+                        class="up" 
+                        style={"visibility: " + (i > 0 ? "" : "hidden") + ";"}
+                        on:click={function(ev) {moveDatum(i, i - 1)}}>
+                        &#8963</button>
+                    <button 
+                        class="down" 
+                        style={"visibility: " + (i < data.length - 1 ? "" : "hidden") + ";"}
+                        on:click={function(ev) {moveDatum(i, i + 1)}}>
+                        &#8964</button>
+                </div>
+
+                {#if datum.html}
+                    {@html datum.html}
+                {:else if datum.text}
+                    <p>{datum.text}</p>
+                {:else}
+                    <p>{datum}</p>
+                {/if}
             </div>
         {/each}
     </div>
