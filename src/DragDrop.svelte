@@ -1,5 +1,26 @@
 <script>
     import {flip} from "svelte/animate";
+    import { quintOut } from 'svelte/easing';
+    import { crossfade } from 'svelte/transition';
+
+	const [send, receive] = crossfade({
+		duration: d => Math.sqrt(d * 200),
+
+		fallback(node, params) {
+			const style = getComputedStyle(node);
+			const transform = style.transform === 'none' ? '' : style.transform;
+
+			return {
+				duration: 600,
+				easing: quintOut,
+				css: t => `
+					transform: ${transform} scale(${t});
+					opacity: ${t}
+				`
+			};
+		}
+    });
+    
     export let data = [];
 
     let ghost;
@@ -72,6 +93,7 @@
     }
 
     .list {
+        cursor: grab;
         z-index: 5;
         display: flex;
         flex-direction: column;
@@ -107,6 +129,7 @@
     }
 
     .buttons button {
+        cursor: pointer;
         width: 1em;
         height: 1em;
         margin: 0 auto;
@@ -164,8 +187,7 @@
                 on:touchmove|preventDefault|stopPropagation={function(ev) {touchEnter(ev.touches[0]);}}
                 in:receive={{key: datum}}
                 out:send={{key: datum}}
-                animate:flip={{duration: 200}}>
-                
+                animate:flip|local={{duration: 200}}>
                 <div class="buttons">
                     <button 
                         class="up" 

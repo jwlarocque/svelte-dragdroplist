@@ -28,7 +28,7 @@ If you aren't sure that your strings will be unique, you should instead pass an 
 ```js
 data = [{"id": 0, "text": "Boston"}, 
         {"id": 1, "text": "Boston"}, 
-        {"id": 2, "text": "Chicago", 
+        {"id": 2, "text": "Chicago"}, 
         {"id": 3, "text": "Denver"}];
 ```
 
@@ -37,11 +37,12 @@ You can also include an "html" attribute instead of "text".  It's up to you to m
 ```js
 data = [{"id": 0, "text": "Adams"}, 
         {"id": 1, "text": "Boston"}, 
-        {"id": 2, "html": "<p style="color: blue;">Chicago</p>", 
-        {"id": 3, "html": "<p style="color: red;">Denver</p>"}];
+        {"id": 2, "html": "<p style='color: blue;'>Chicago</p>"}, 
+        {"id": 3, "html": "<p style='color: red;'>Denver</p>"}];
 ```
 
 ### In Progress:
 
+* Poor performance on Firefox
 * Occasional bug where item movement doesn't register
 * Additional animations on drop
