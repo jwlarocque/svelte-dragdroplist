@@ -1,21 +1,32 @@
 {
-  "name": "svelte-app",
+  "name": "svelte-dragdroplist",
+  "main": "DragDropList.svelte",
+  "svelte": "DragDropList.svelte",
   "version": "1.0.0",
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "11.0.2",
-    "@rollup/plugin-node-resolve": "^7.0.0",
-    "rollup": "^1.20.0",
-    "rollup-plugin-livereload": "^1.0.0",
-    "rollup-plugin-svelte": "^5.0.3",
-    "rollup-plugin-terser": "^5.1.2",
+  "peerDependencies": {
     "svelte": "^3.0.0"
   },
-  "dependencies": {
-    "sirv-cli": "^0.4.4"
-  }
+  "devDependencies": {
+    "svelte": "^3.0.0"
+  },
+  "license": "ISC",
+  "respository": {
+    "type": "git",
+    "url": "git+https://github.com/jwlarocque/svelte-dragdroplist.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jwlarocque/svelte-dragdroplist/issues"
+  },
+  "description": "Sortable lists with Svelte 3.  Animated, touch-friendly, and accessible.",
+  "author": "John LaRocque <john@jwlarocque.com>",
+  "homepage": "https://github.com/jwlarocque/svelte-dragdroplist",
+  "keywords": [
+    "svelte",
+    "drag",
+    "drop",
+    "list",
+    "sortable",
+    "component",
+    "dnd"
+  ]
 }

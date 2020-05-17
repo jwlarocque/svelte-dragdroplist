@@ -15,7 +15,6 @@
     function grab(clientY, element) {
         // modify grabbed element
         grabbed = element;
-        grabbed.id = "grabbed";
         grabbed.dataset.grabY = clientY;
 
         // modify ghost element (which is actually dragged)
@@ -64,12 +63,7 @@
     }
 
     function release(ev) {
-        if (grabbed) {
-            // undo modifications to grabbed element
-            grabbed.id = "";
-            // also re-hides ghost
-            grabbed = null;
-        }
+        grabbed = null;
     }
 </script>
 
@@ -128,11 +122,11 @@
         border: 1px solid black;
     }
 
-    :global(#grabbed) {
+    #grabbed {
         opacity: 0.0;
     }
 
-    :global(#ghost) {
+    #ghost {
         pointer-events: none;
         z-index: -5;
         position: absolute;
@@ -141,14 +135,11 @@
         opacity: 0.0;
     }
 
-    :global(#ghost *) {
+    #ghost * {
         pointer-events: none;
     }
 
-    /* Svelte seems to be a bit overzealous about minifying away this rule, so it's
-       set to global.  Consider submitting an issue/otherwise bringing it up. 
-       The above rule must also be global so precedence works normally. */
-    :global(#ghost.haunting) {
+    #ghost.haunting {
         z-index: 20;
         opacity: 1.0;
     }
@@ -164,12 +155,12 @@
      grabbed element when triggered.
      You'll also find reactive styling below, which keeps it from being directly
      part of the imperative javascript handlers. -->
-<main>
+<main class="dragdroplist">
     <div 
         bind:this={ghost}
         id="ghost"
         class={grabbed ? "item haunting" : "item"}
-        style={"top: " + (mouseY + offsetY - layerY) + "px"}></div>
+        style={"top: " + (mouseY + offsetY - layerY) + "px"}><p></p></div>
     <div 
         class="list"
         on:mousemove={function(ev) {drag(ev.clientY);}}
@@ -178,8 +169,10 @@
         on:touchend|stopPropagation={function(ev) {release(ev.touches[0]);}}>
         {#each data as datum, i (datum.id ? datum.id : datum)}
             <div 
+                id={(grabbed && (datum.id ? datum.id : datum) == grabbed.dataset.id) ? "grabbed" : ""}
                 class="item"
                 data-index={i}
+                data-id={(datum.id ? datum.id : datum)}
                 data-grabY="0"
                 on:mousedown={function(ev) {grab(ev.clientY, this);}}
                 on:touchstart={function(ev) {grab(ev.touches[0].clientY, this);}}
