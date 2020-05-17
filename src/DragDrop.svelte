@@ -2,24 +2,6 @@
     import {flip} from "svelte/animate";
     import { quintOut } from 'svelte/easing';
     import { crossfade } from 'svelte/transition';
-
-	const [send, receive] = crossfade({
-		duration: d => Math.sqrt(d * 200),
-
-		fallback(node, params) {
-			const style = getComputedStyle(node);
-			const transform = style.transform === 'none' ? '' : style.transform;
-
-			return {
-				duration: 600,
-				easing: quintOut,
-				css: t => `
-					transform: ${transform} scale(${t});
-					opacity: ${t}
-				`
-			};
-		}
-    });
     
     export let data = [];
 
@@ -75,7 +57,8 @@
     }
 
     function moveDatum(from, to) {
-        let temp = data.splice(from, 1)[0];
+        let temp = data[from];
+        data = [...data.slice(0, from), ...data.slice(from + 1, data.length)];
         data = [...data.slice(0, to), temp, ...data.slice(to)];
     }
 
@@ -185,8 +168,6 @@
                 on:touchstart={function(ev) {grab(ev.touches[0].clientY, this);}}
                 on:mouseenter|stopPropagation|self={function(ev) {dragEnter(ev, ev.target);}}
                 on:touchmove|preventDefault|stopPropagation={function(ev) {touchEnter(ev.touches[0]);}}
-                in:receive={{key: datum}}
-                out:send={{key: datum}}
                 animate:flip|local={{duration: 200}}>
                 <div class="buttons">
                     <button 

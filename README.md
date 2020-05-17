@@ -43,6 +43,5 @@ data = [{"id": 0, "text": "Adams"},
 
 ### In Progress:
 
-* Poor performance on Firefox
 * Occasional bug where item movement doesn't register
 * Additional animations on drop
