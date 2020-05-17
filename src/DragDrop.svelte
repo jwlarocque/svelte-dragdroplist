@@ -48,7 +48,6 @@
     }
 
     function dragEnter(ev, target) {
-        drag(ev.clientY);
         if (grabbed) {
             // swap items in data
             if (target != grabbed && target.classList.contains("item")) {
@@ -65,10 +64,12 @@
     }
 
     function release(ev) {
-        // undo modifications to grabbed element
-        grabbed.id = "";
-        // also re-hides ghost
-        grabbed = null;
+        if (grabbed) {
+            // undo modifications to grabbed element
+            grabbed.id = "";
+            // also re-hides ghost
+            grabbed = null;
+        }
     }
 </script>
 
@@ -86,7 +87,7 @@
 
     .item {
         box-sizing: border-box;
-        padding-right: 2em;
+        padding-right: 32px;
         display: inline-flex;
         width: 100%;
         min-height: 3em;
@@ -106,8 +107,8 @@
     }
 
     .buttons {
-        width: 2em;
-        min-width: 2em;
+        width: 32px;
+        min-width: 32px;
         margin: auto 0;
         display: flex;
         flex-direction: column;
@@ -115,12 +116,16 @@
 
     .buttons button {
         cursor: pointer;
-        width: 1em;
-        height: 1em;
+        width: 18px;
+        height: 18px;
         margin: 0 auto;
         padding: 0;
-        border: none;
+        border: 1px solid rgba(0, 0, 0, 0);
         background-color: inherit;
+    }
+
+    .buttons button:focus {
+        border: 1px solid black;
     }
 
     :global(#grabbed) {
@@ -186,12 +191,14 @@
                         class="up" 
                         style={"visibility: " + (i > 0 ? "" : "hidden") + ";"}
                         on:click={function(ev) {moveDatum(i, i - 1)}}>
-                        &#8963</button>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16px" height="16px"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6 1.41 1.41z"/></svg>
+                        </button>
                     <button 
                         class="down" 
                         style={"visibility: " + (i < data.length - 1 ? "" : "hidden") + ";"}
                         on:click={function(ev) {moveDatum(i, i + 1)}}>
-                        &#8964</button>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16px" height="16px"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                        </button>
                 </div>
 
                 {#if datum.html}
