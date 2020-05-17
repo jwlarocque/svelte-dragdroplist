@@ -1,7 +1,5 @@
 <script>
     import {flip} from "svelte/animate";
-    import { quintOut } from 'svelte/easing';
-    import { crossfade } from 'svelte/transition';
     
     export let data = [];
 
@@ -29,6 +27,7 @@
         drag(clientY);
     }
 
+    // drag handler updates cursor position
     function drag(clientY) {
         if (grabbed) {
             mouseY = clientY;
@@ -36,6 +35,8 @@
         }
     }
 
+    // touchEnter handler emulates the mouseenter event for touch input
+    // (more or less)
     function touchEnter(ev) {       
         drag(ev.clientY);
         // trigger dragEnter the first time the cursor moves over a list item
@@ -56,9 +57,10 @@
         }
     }
 
+    // does the actual moving of items in data
     function moveDatum(from, to) {
         let temp = data[from];
-        data = [...data.slice(0, from), ...data.slice(from + 1, data.length)];
+        data = [...data.slice(0, from), ...data.slice(from + 1)];
         data = [...data.slice(0, to), temp, ...data.slice(to)];
     }
 
@@ -147,6 +149,16 @@
     }
 </style>
 
+<!-- All the documentation has to go up here, sorry.
+     (otherwise it conflicts with the HTML or svelte/animate) 
+     The .list has handlers for pointer movement and pointer up/release/end.
+     Each .item has a handler for pointer down/click/start, which assigns that
+     element as the item currently being "grabbed".  They also have a handler
+     for pointer enter (the touchmove handler has extra logic to behave like the
+     no longer extant 'touchenter'), which swaps the entered element with the
+     grabbed element when triggered.
+     You'll also find reactive styling below, which keeps it from being directly
+     part of the imperative javascript handlers. -->
 <main>
     <div 
         bind:this={ghost}

@@ -1,16 +1,19 @@
 # Svelte-DragDropList
 
-Sortable list with Svelte.
+Sortable lists with Svelte.
+[try the REPL](https://svelte.dev/repl/915db3b3ed704fddb7ddfb64bcbc2624?version=3.22.2)
 
 ### Why this component?
 
 * Bidirectional binding - data order updates as soon as the user drags a list item into a new position, even before it is dropped.  This means that animations fire immediately too.
 * Touch support (doesn't use the HTML5 drag and drop API)
-
+* Easier than writing a new one, probably.
 
 ### Usage
 
-Import the `DragDrop` component from `DragDrop.svelte`.
+[REPL](https://svelte.dev/repl/915db3b3ed704fddb7ddfb64bcbc2624?version=3.22.2)
+
+Grab `DragDrop.svelte` from `src/` and import it into your Svelte app -
 
 The simplest way to use the component is to pass it an array of unique strings.  The array will be updated as the user rearranges its items.
 ```js
@@ -41,7 +44,7 @@ data = [{"id": 0, "text": "Adams"},
         {"id": 3, "html": "<p style='color: red;'>Denver</p>"}];
 ```
 
-### In Progress:
+### In Progress
 
 * Occasional bug where item movement doesn't register
 * Additional animations on drop

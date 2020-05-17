@@ -1,52 +1,55 @@
 <script>
-	import DragDrop from "./DragDrop.svelte";
+    import DragDrop from "./DragDrop.svelte";
 
-	let data2 = ["Adams", "Boston", "Chicago", "Denver"];
-	let data1 = new Array(6).fill(0).map((x, i) => ("Item " + (i + 1)));
+    let data1 = ["Apples", "Butter", "Charlie", "Duff", "Edward", "Freddy", "George", "Harry", "Ink", "Johnnie", "King", "London"];
+	let data2 = [
+			{"id": 0, "text": "Boston"}, 
+			{"id": 1, "text": "Boston"}, 
+			{"id": 2, "text": "Chicago"}, 
+			{"id": 3, "text": "Denver"}];
+	let data3 = [
+			{"id": 0, "text": "Adams"},
+			{"id": 1, "text": "Boston"}, 
+			{"id": 2, "html": "<p style='color: red;'>Chicago</p>"}, 
+			{"id": 3, "html": "<p style='color: blue;'>Denver</p>"}];
+
 	let data = data1;
-	data[6] = ({"id": "lorem","html": "<p style='color: red;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>"});
 </script>
-
-<main>
-	<h1>DragDrop</h1>
-	<button on:click={function() {data = data2;}}>Data 2</button>
-	<p>Data: {data}</p>
-	<div>
-		<DragDrop bind:data={data}/>
-	</div>
-</main>
 
 <style>
 	:global(body) {
-		padding: 0;
-		width: 100%;
+		background-color: #eef2f3;
 	}
 
 	main {
 		text-align: center;
-		margin: 0;
-		padding: 2em 1em;
-		min-height: 100%;
-		background-color: #eef2f3;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 3em;
-		font-weight: 100;
-		margin-top: 0;
-	}
-
-	div {
-		max-width: 30em;
-		width: 100%;
+		max-width: 36em;
 		margin: auto;
 	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
 </style>
+
+<main>
+	<h3>
+		Svelte DragDropList!
+	</h3>
+	<p>
+		<a href="https://github.com/jwlarocque/svelte-dragdroplist">github.com/jwlarocque/svelte-dragdroplist</a>
+	</p>
+
+	<button on:click={() => data = data1}>
+		Text Data
+	</button>
+	<button on:click={() => data = data2}>
+		Object Data
+	</button>
+	<button on:click={() => data = data3}>
+		HTML Data
+	</button>
+
+	<p>
+		Data: {JSON.stringify(data)}
+	</p>
+
+	<DragDrop bind:data={data}/>
+</main>
+
