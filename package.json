@@ -2,7 +2,7 @@
   "name": "svelte-dragdroplist",
   "main": "DragDropList.svelte",
   "svelte": "DragDropList.svelte",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "peerDependencies": {
     "svelte": "^3.0.0"
   },
