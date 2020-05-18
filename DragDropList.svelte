@@ -167,12 +167,12 @@
         on:touchmove={function(ev) {drag(ev.touches[0].clientY);}}
         on:mouseup|stopPropagation={function(ev) {release(ev);}}
         on:touchend|stopPropagation={function(ev) {release(ev.touches[0]);}}>
-        {#each data as datum, i (datum.id ? datum.id : datum)}
+        {#each data as datum, i (datum.id ? datum.id : JSON.stringify(datum))}
             <div 
-                id={(grabbed && (datum.id ? datum.id : datum) == grabbed.dataset.id) ? "grabbed" : ""}
+                id={(grabbed && (datum.id ? datum.id : JSON.stringify(datum)) == grabbed.dataset.id) ? "grabbed" : ""}
                 class="item"
                 data-index={i}
-                data-id={(datum.id ? datum.id : datum)}
+                data-id={(datum.id ? datum.id : JSON.stringify(datum))}
                 data-grabY="0"
                 on:mousedown={function(ev) {grab(ev.clientY, this);}}
                 on:touchstart={function(ev) {grab(ev.touches[0].clientY, this);}}
