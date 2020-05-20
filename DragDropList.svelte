@@ -70,6 +70,7 @@
 <style>
     main {
         position: relative;
+        width: 100%;
     }
 
     .list {
@@ -82,6 +83,8 @@
     .item {
         box-sizing: border-box;
         padding-right: 32px;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
         display: inline-flex;
         width: 100%;
         min-height: 3em;
@@ -174,7 +177,7 @@
                 data-index={i}
                 data-id={(datum.id ? datum.id : JSON.stringify(datum))}
                 data-grabY="0"
-                on:mousedown={function(ev) {grab(ev.clientY, this);}}
+                on:mousedown|stopPropagation={function(ev) {grab(ev.clientY, this);}}
                 on:touchstart={function(ev) {grab(ev.touches[0].clientY, this);}}
                 on:mouseenter|stopPropagation|self={function(ev) {dragEnter(ev, ev.target);}}
                 on:touchmove|preventDefault|stopPropagation={function(ev) {touchEnter(ev.touches[0]);}}
@@ -198,6 +201,8 @@
                     {@html datum.html}
                 {:else if datum.text}
                     <p>{datum.text}</p>
+                {:else if datum.data}
+                    <svelte:self bind:data={datum.data}/>
                 {:else}
                     <p>{datum}</p>
                 {/if}
