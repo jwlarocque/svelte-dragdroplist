@@ -47,11 +47,9 @@
     }
 
     function dragEnter(ev, target) {
-        if (grabbed) {
-            // swap items in data
-            if (target != grabbed && target.classList.contains("item")) {
-                moveDatum(parseInt(grabbed.dataset.index), parseInt(target.dataset.index));
-            }
+        // swap items in data
+        if (grabbed && target != grabbed && target.classList.contains("item")) {
+            moveDatum(parseInt(grabbed.dataset.index), parseInt(target.dataset.index));
         }
     }
 
@@ -90,6 +88,10 @@
         border: 1px solid rgb(190, 190, 190);
         border-radius: 2px;
         user-select: none;
+    }
+
+    .item:last-child {
+        margin-bottom: 0;
     }
 
     .item:not(#grabbed):not(#ghost) {
