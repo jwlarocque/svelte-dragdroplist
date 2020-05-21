@@ -47,11 +47,9 @@
     }
 
     function dragEnter(ev, target) {
-        if (grabbed) {
-            // swap items in data
-            if (target != grabbed && target.classList.contains("item")) {
-                moveDatum(parseInt(grabbed.dataset.index), parseInt(target.dataset.index));
-            }
+        // swap items in data
+        if (grabbed && target != grabbed && target.classList.contains("item")) {
+            moveDatum(parseInt(grabbed.dataset.index), parseInt(target.dataset.index));
         }
     }
 
@@ -93,6 +91,10 @@
         border: 1px solid rgb(190, 190, 190);
         border-radius: 2px;
         user-select: none;
+    }
+
+    .item:last-child {
+        margin-bottom: 0;
     }
 
     .item:not(#grabbed):not(#ghost) {
@@ -158,7 +160,10 @@
      grabbed element when triggered.
      You'll also find reactive styling below, which keeps it from being directly
      part of the imperative javascript handlers. -->
-<main class="dragdroplist">
+<main class="dragdroplist"
+    on:touchmove|preventDefault|stopPropagation
+    on:mouseenter|stopPropagation
+    on:mousedown|stopPropagation>
     <div 
         bind:this={ghost}
         id="ghost"
@@ -168,8 +173,8 @@
         class="list"
         on:mousemove={function(ev) {drag(ev.clientY);}}
         on:touchmove={function(ev) {drag(ev.touches[0].clientY);}}
-        on:mouseup|stopPropagation={function(ev) {release(ev);}}
-        on:touchend|stopPropagation={function(ev) {release(ev.touches[0]);}}>
+        on:mouseup={function(ev) {release(ev);}}
+        on:touchend={function(ev) {release(ev.touches[0]);}}>
         {#each data as datum, i (datum.id ? datum.id : JSON.stringify(datum))}
             <div 
                 id={(grabbed && (datum.id ? datum.id : JSON.stringify(datum)) == grabbed.dataset.id) ? "grabbed" : ""}
@@ -177,10 +182,10 @@
                 data-index={i}
                 data-id={(datum.id ? datum.id : JSON.stringify(datum))}
                 data-grabY="0"
-                on:mousedown|stopPropagation={function(ev) {grab(ev.clientY, this);}}
+                on:mousedown={function(ev) {grab(ev.clientY, this);}}
                 on:touchstart={function(ev) {grab(ev.touches[0].clientY, this);}}
-                on:mouseenter|stopPropagation|self={function(ev) {dragEnter(ev, ev.target);}}
-                on:touchmove|preventDefault|stopPropagation={function(ev) {touchEnter(ev.touches[0]);}}
+                on:mouseenter={function(ev) {dragEnter(ev, ev.target);}}
+                on:touchmove={function(ev) {touchEnter(ev.touches[0]);}}
                 animate:flip|local={{duration: 200}}>
                 <div class="buttons">
                     <button 
