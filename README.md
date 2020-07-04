@@ -1,6 +1,8 @@
 # Svelte-DragDropList
 
-Sortable lists with Svelte.  [Try the REPL!](https://svelte.dev/repl/915db3b3ed704fddb7ddfb64bcbc2624?version=3.22.2)  
+Sortable lists [made with Svelte](https://madewithsvelte.com/svelte-dragdroplist).  
+[Try the REPL!](https://svelte.dev/repl/915db3b3ed704fddb7ddfb64bcbc2624?version=3.22.2)  
+[Available from NPM](https://www.npmjs.com/package/svelte-dragdroplist)  
 
 ### Why this component?
 
