@@ -204,13 +204,15 @@
                     </button>
                 </div>
 
-                {#if datum.html}
-                    {@html datum.html}
-                {:else if datum.text}
-                    <p>{datum.text}</p>
-                {:else}
-                    <p>{datum}</p>
-                {/if}
+                <div class="content">
+                    {#if datum.html}
+                        {@html datum.html}
+                    {:else if datum.text}
+                        <p>{datum.text}</p>
+                    {:else}
+                        <p>{datum}</p>
+                    {/if}
+                </div>
 
                 <div class="buttons delete">
                     {#if removesItems}
