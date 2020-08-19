@@ -2,6 +2,7 @@
     import {flip} from "svelte/animate";
     
     export let data = [];
+    export let removesItems = false;
 
     let ghost;
     let grabbed;
@@ -63,6 +64,10 @@
     function release(ev) {
         grabbed = null;
     }
+
+    function removeDatum(index) {
+        data = [...data.slice(0, index), ...data.slice(index + 1)];
+    }
 </script>
 
 <style>
@@ -79,7 +84,6 @@
 
     .item {
         box-sizing: border-box;
-        padding-right: 32px;
         display: inline-flex;
         width: 100%;
         min-height: 3em;
@@ -122,6 +126,10 @@
 
     .buttons button:focus {
         border: 1px solid black;
+    }
+
+    .delete {
+        width: 32px;
     }
 
     #grabbed {
@@ -187,13 +195,13 @@
                         style={"visibility: " + (i > 0 ? "" : "hidden") + ";"}
                         on:click={function(ev) {moveDatum(i, i - 1)}}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16px" height="16px"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6 1.41 1.41z"/></svg>
-                        </button>
+                    </button>
                     <button 
                         class="down" 
                         style={"visibility: " + (i < data.length - 1 ? "" : "hidden") + ";"}
                         on:click={function(ev) {moveDatum(i, i + 1)}}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16px" height="16px"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
-                        </button>
+                    </button>
                 </div>
 
                 {#if datum.html}
@@ -203,6 +211,15 @@
                 {:else}
                     <p>{datum}</p>
                 {/if}
+
+                <div class="buttons delete">
+                    {#if removesItems}
+                        <button
+                            on:click={function(ev) {removeDatum(i);}}>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                        </button>
+                    {/if}
+                </div>
             </div>
         {/each}
     </div>

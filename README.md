@@ -14,7 +14,7 @@ Sortable lists [made with Svelte](https://madewithsvelte.com/svelte-dragdroplist
 ### Usage
 
 [Basic REPL](https://svelte.dev/repl/6fb61b9868734493aec65eb53dc1a4bd?version=3.22.2)  
-[REPL with data binding, multiple datasets, IDs, and HTML items.](https://svelte.dev/repl/915db3b3ed704fddb7ddfb64bcbc2624?version=3.22.2)  
+[REPL with every feature!](https://svelte.dev/repl/915db3b3ed704fddb7ddfb64bcbc2624?version=3.22.2)  
 
 The simplest way to use the component is to pass it an array of unique strings.  If you `bind:data`, the source array will be updated as the user rearranges its items.
 ```js
@@ -27,6 +27,8 @@ The simplest way to use the component is to pass it an array of unique strings. 
 <DragDropList bind:data={data}/>
 ```
 
+##### Unique IDs
+
 If you aren't sure that your strings will be unique, you should instead pass an array of objects, each with a unique ID:  
 
 ```js
@@ -36,6 +38,8 @@ let data = [{"id": 0, "text": "Boston"},
             {"id": 3, "text": "Denver"}];
 ```
 
+##### HTML
+
 You can also include an "html" attribute instead of "text".  It's up to you to make sure the html is clean.  
   If you want, you can even use both in one list.  
 ```js
@@ -44,6 +48,20 @@ let data = [{"id": 0, "text": "Adams"},
             {"id": 2, "html": "<p style='color: blue;'>Chicago</p>"}, 
             {"id": 3, "html": "<p style='color: red;'>Denver</p>"}];
 ```
+
+##### Removable Items
+
+A delete button can be added to each item with the `removesItems` prop:
+```js
+<script>
+    import DragDrop from "./DragDrop.svelte";
+
+    data = ["Adams", "Boston", "Chicago", "Denver"];
+</script>
+
+<DragDrop bind:data={data} removesItems={true}/>
+```
+Note: _adding_ items is as simple as adding them to the data array.
 
 ### In Progress
 
