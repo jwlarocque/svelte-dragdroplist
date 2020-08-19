@@ -1,8 +1,6 @@
 # Svelte-DragDropList
 
-Sortable lists [made with Svelte](https://madewithsvelte.com/svelte-dragdroplist).  
-[Try the REPL!](https://svelte.dev/repl/915db3b3ed704fddb7ddfb64bcbc2624?version=3.22.2)  
-[Available from NPM](https://www.npmjs.com/package/svelte-dragdroplist)  
+Sortable lists [made with Svelte](https://madewithsvelte.com/svelte-dragdroplist).  [Available from NPM!](https://www.npmjs.com/package/svelte-dragdroplist)  
 
 ### Why this component?
 
@@ -53,15 +51,22 @@ let data = [{"id": 0, "text": "Adams"},
 
 A delete button can be added to each item with the `removesItems` prop:
 ```js
-<script>
-    import DragDrop from "./DragDrop.svelte";
-
-    data = ["Adams", "Boston", "Chicago", "Denver"];
-</script>
-
-<DragDrop bind:data={data} removesItems={true}/>
+<DragDropList bind:data={data} removesItems={true}/>
 ```
 Note: _adding_ items is as simple as adding them to the data array.
+
+### Styling
+
+To style the list and its elements from a parent component or global stylesheet, prefix your selectors with `.dragdroplist`.  You may need to increase the specificity of your selectors or even use the `!important` rule in order to override the classes applied by Svelte.  For example:
+
+```css
+:global(.dragdroplist) {} /* entire component */
+:global(.dragdroplist > .list > div.item) {} /* list item */
+:global(.dragdroplist div.buttons > button.down) {} /* move down button */
+:global(.dragdroplist div.content) {} /* text/html contents of item */
+```
+
+If you only need to style the contents of an item, you can also use an object with an `html` property as described above.
 
 ### In Progress
 
