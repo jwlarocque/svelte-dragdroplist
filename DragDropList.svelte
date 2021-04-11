@@ -206,12 +206,16 @@
                 </div>
 
                 <div class="content">
-                    {#if datum.html}
-                        {@html datum.html}
-                    {:else if datum.text}
-                        <p>{datum.text}</p>
+                    {#if $$slots.customView}
+                        <slot name="customView" item={ datum }></slot>
                     {:else}
-                        <p>{datum}</p>
+                        {#if datum.html}
+                            {@html datum.html}
+                        {:else if datum.text}
+                            <p>{datum.text}</p>
+                        {:else}
+                            <p>{datum}</p>
+                        {/if}
                     {/if}
                 </div>
 
