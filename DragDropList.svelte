@@ -3,6 +3,7 @@
     
     export let data = [];
     export let removesItems = false;
+    export let objectKey = 'id';
 
     let ghost;
     let grabbed;
@@ -177,12 +178,12 @@
         on:touchmove={function(ev) {ev.stopPropagation(); drag(ev.touches[0].clientY);}}
         on:mouseup={function(ev) {ev.stopPropagation(); release(ev);}}
         on:touchend={function(ev) {ev.stopPropagation(); release(ev.touches[0]);}}>
-        {#each data as datum, i (datum.id ? datum.id : JSON.stringify(datum))}
+        {#each data as datum, i (datum[objectKey] ? datum[objectKey] : JSON.stringify(datum))}
             <div 
-                id={(grabbed && (datum.id ? datum.id : JSON.stringify(datum)) == grabbed.dataset.id) ? "grabbed" : ""}
+                id={(grabbed && (datum[objectKey] ? datum[objectKey] : JSON.stringify(datum)) == grabbed.dataset.id) ? "grabbed" : ""}
                 class="item"
                 data-index={i}
-                data-id={(datum.id ? datum.id : JSON.stringify(datum))}
+                data-id={(datum[objectKey] ? datum[objectKey] : JSON.stringify(datum))}
                 data-grabY="0"
                 on:mousedown={function(ev) {grab(ev.clientY, this);}}
                 on:touchstart={function(ev) {grab(ev.touches[0].clientY, this);}}
