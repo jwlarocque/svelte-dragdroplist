@@ -209,6 +209,8 @@
                         {@html datum.html}
                     {:else if datum.text}
                         <p>{datum.text}</p>
+                    {:else if datum.component}
+                        <svelte:component this={datum.component} {...datum.props}/>
                     {:else}
                         <p>{datum}</p>
                     {/if}
