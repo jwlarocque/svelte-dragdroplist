@@ -47,6 +47,17 @@ let data = [{"id": 0, "text": "Adams"},
             {"id": 3, "html": "<p style='color: red;'>Denver</p>"}];
 ```
 
+##### Custom Svelte Components
+
+You can also include an "component" attribute with the associated "props" to pass to the component
+to allow for custom rendering of the child objects.  
+```js
+import Component from Component.svelte;
+
+let data = [{"component": Component, "props": {color: "red"}},
+            {"component": Component, "props": {color: "green"}}];
+```
+
 ##### Removable Items
 
 A delete button can be added to each item with the `removesItems` prop:
