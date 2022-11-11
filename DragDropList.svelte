@@ -3,7 +3,8 @@
     
     export let data = [];
     export let removesItems = false;
-
+    export let itemDblClick;
+    
     let ghost;
     let grabbed;
 
@@ -188,6 +189,7 @@
                 on:touchstart={function(ev) {grab(ev.touches[0].clientY, this);}}
                 on:mouseenter={function(ev) {ev.stopPropagation(); dragEnter(ev, ev.target);}}
                 on:touchmove={function(ev) {ev.stopPropagation(); ev.preventDefault(); touchEnter(ev.touches[0]);}}
+                on:dblclick={function(ev) {ev.stopPropagation(); ev.preventDefault(); itemDblClick(datum);}}
                 animate:flip|local={{duration: 200}}>
                 <div class="buttons">
                     <button 

@@ -7,6 +7,7 @@ Sortable lists [made with Svelte](https://madewithsvelte.com/svelte-dragdroplist
 * Bidirectional binding - data order updates as soon as the user drags a list item into a new position, even before it is dropped
 * Full touch support - doesn't use the HTML5 drag and drop API
 * Accessible - includes buttons to move elements without dragging
+* Double clicking on element returns its contents
 * Easier than writing a new one, probably.
 
 ### Usage
@@ -55,6 +56,13 @@ A delete button can be added to each item with the `removesItems` prop:
 ```
 Note: _adding_ items is as simple as adding them to the data array.
 
+##### Getting Item Data on Double Click
+
+Double clicking items will return the value of the item with `itemDblClick` event:
+```js
+<DragDropList bind:data={data} itemDblClick={(e) => { console.log(e)}}/>
+```
+
 ### Styling
 
 To style the list and its elements from a parent component or global stylesheet, prefix your selectors with `.dragdroplist`.  You may need to increase the specificity of your selectors or even use the `!important` rule in order to override the classes applied by Svelte.  For example:
@@ -71,4 +79,4 @@ If you only need to style the contents of an item, you can also use an object wi
 ### In Progress
 
 * Additional animations on drop  
-* Double click to emit value of item
+* Option for Additional buttons along with removeItems button
