@@ -71,3 +71,4 @@ If you only need to style the contents of an item, you can also use an object wi
 ### In Progress
 
 * Additional animations on drop  
+* Double click to emit value of item
