@@ -1,5 +1,5 @@
 {
-  "name": "svelte-dragdroplist",
+  "name": "svelte-dragdroplist-clickable",
   "version": "1.1.1",
   "svelte": "dist/index.js",
   "module": "dist/index.mjs",
@@ -39,14 +39,14 @@
   "license": "ISC",
   "respository": {
     "type": "git",
-    "url": "git+https://github.com/jwlarocque/svelte-dragdroplist.git"
+    "url": "git+https://github.com/rohitmeshramD/svelte-dragdroplist.git"
   },
   "bugs": {
-    "url": "https://github.com/jwlarocque/svelte-dragdroplist/issues"
+    "url": "https://github.com/rohitmeshramD/svelte-dragdroplist/issues"
   },
   "description": "Sortable lists with Svelte 3.  Animated, touch-friendly, and accessible.",
-  "author": "John LaRocque <john@jwlarocque.com>",
-  "homepage": "https://github.com/jwlarocque/svelte-dragdroplist",
+  "author": "Rohit Meshram <rohitmeshramd@gmail.com>",
+  "homepage": "https://github.com/rohitmeshramD/svelte-dragdroplist",
   "keywords": [
     "svelte",
     "drag",
@@ -54,6 +54,8 @@
     "list",
     "sortable",
     "component",
-    "dnd"
+    "dnd",
+    "clickable",
+    "double click"
   ]
 }

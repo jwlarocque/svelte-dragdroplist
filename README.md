@@ -2,6 +2,10 @@
 
 Sortable lists [made with Svelte](https://madewithsvelte.com/svelte-dragdroplist).  [Available from NPM!](https://www.npmjs.com/package/svelte-dragdroplist)  
 
+### Credit
+* This package is an extension of [svelte-dragdroplist](https://www.npmjs.com/package/svelte-dragdroplist) created by [jwlarocque](https://www.npmjs.com/~jwlarocque), who is original author.
+* `svelte-dragdroplist-clickable` was created with features required for our own project.
+
 ### Why this component?
 
 * Bidirectional binding - data order updates as soon as the user drags a list item into a new position, even before it is dropped
