@@ -2,5 +2,4 @@
 /public/build/
 
 .DS_Store
-dist/
 .vscode/settings.json
