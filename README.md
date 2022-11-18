@@ -70,6 +70,8 @@ To style the list and its elements from a parent component or global stylesheet,
 ```css
 :global(.dragdroplist) {} /* entire component */
 :global(.dragdroplist > .list > div.item) {} /* list item */
+:global(.dragdroplist > .list > div.item.item-active) {} /* list item active */
+:global(.dragdroplist > .list > div.item.item-active svg) {} /* styling the svg icons when an item is in active state */
 :global(.dragdroplist div.buttons > button.down) {} /* move down button */
 :global(.dragdroplist div.content) {} /* text/html contents of item */
 ```
