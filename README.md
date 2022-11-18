@@ -41,6 +41,10 @@ let data = [{"id": 0, "text": "Boston"},
             {"id": 3, "text": "Denver"}];
 ```
 
+##### Active Item Color
+
+Clicked item now has a different background and text color.
+
 ##### HTML
 
 You can also include an "html" attribute instead of "text".  It's up to you to make sure the html is clean.  
@@ -84,5 +88,5 @@ If you only need to style the contents of an item, you can also use an object wi
 
 ### In Progress
 
-* Additional animations on drop  
+* Additional animations on drop  `see original package in Credit`
 * Option for Additional buttons along with removeItems button
