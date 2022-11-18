@@ -4,7 +4,7 @@
   export let data = [];
   export let removesItems = false;
   export let itemDblClick;
-  export let activeItemIndex: number;
+  export let activeItemIndex: number = null;
 
   let ghost;
   let grabbed;

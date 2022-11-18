@@ -1104,7 +1104,7 @@
     	let { data = [] } = $$props;
     	let { removesItems = false } = $$props;
     	let { itemDblClick } = $$props;
-    	let { activeItemIndex } = $$props;
+    	let { activeItemIndex = null } = $$props;
     	let ghost;
     	let grabbed;
     	let lastTarget;

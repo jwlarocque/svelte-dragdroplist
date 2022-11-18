@@ -2,7 +2,7 @@
 export let data = [];
 export let removesItems = false;
 export let itemDblClick;
-export let activeItemIndex;
+export let activeItemIndex = null;
 let ghost;
 let grabbed;
 let lastTarget;
