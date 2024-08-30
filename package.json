@@ -4,10 +4,10 @@
   "svelte": "DragDropList.svelte",
   "version": "1.1.1",
   "peerDependencies": {
-    "svelte": "^3.0.0"
+    "svelte": "^4.2.19"
   },
   "devDependencies": {
-    "svelte": "^3.0.0"
+    "svelte": "^4.2.19"
   },
   "license": "ISC",
   "respository": {
